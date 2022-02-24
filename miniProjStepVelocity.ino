@@ -16,12 +16,15 @@ const int motSign1 = 7;
 const int motSign2 = 8;
 const int motorV1 = 9;
 const int motorV2 = 10;
+// V
 int command = 0;
 
 // variable for angular velocity
+// rad/s
 float angVel = 0;
 
 // for millis command
+// ms
 int period = 10;
 unsigned long time_now = 0;
 
@@ -32,7 +35,9 @@ unsigned long timeVolt = 0;
 int aPin = 2;   //aPin will use interrupts, but bPin will not. 
 int bPin = 12;
 float oldPos = 0; //wheel starts at an angular position of 0 radians
+// counts
 float currPos = 0;
+// rad
 float radPos = 0.0;
 bool reset = 0;
 
