@@ -17,14 +17,14 @@ const int encoderPin = 12;
 const int D2 = 4;
 const int motSign1 = 7;
 const int motorV1 = 9;
-int command = 0;
+int command = 0;  // V
 
 // controller parameters
 float Kp = 4.5;
 float Ki = 0.05;
 
 // time variables to keep track of period wait times
-int period = 10;
+int period = 10;  // ms
 unsigned long time_now = 0;
 
 // controller time variables
@@ -38,6 +38,7 @@ float cumError = 0;
 
 int numCam = 0;
 float desPos[] = {PI/2, PI, (3*PI)/2, 2*PI};
+// rad
 float setPoint = 0;
 
 // encoder declarations
@@ -84,13 +85,14 @@ void loop() {
   elapsedTime = currentTime - previousTime;
 
   // check encoder position
+  // rad
   currPos = myEnc.read() * ((2*PI) / 3200);
     
   // calculate error from current position to desired position
   error = setPoint - currPos;
   cumError += (error * elapsedTime) / 1000;
 
-  // for PI
+  // for PI V
   command = ((Kp * error) + (Ki * cumError)) * (255/8);
 
   if(command > 255){
