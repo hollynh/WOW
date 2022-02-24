@@ -4,6 +4,8 @@
 // Spring 2022
 // Dr. Sager
 // Mini Project Controller
+// This code runs a step response experiment and makes motor go to desired 
+// position.
 /////////////////////////////////////////////////////////////////////////////
 #include <Encoder.h>
 
@@ -15,8 +17,8 @@ const int motorV1 = 9;
 int command = 0;
 
 // controller parameters
-float Kp = 6;
-float Ki = 5;
+float Kp = 4.5;
+float Ki = 0.05;
 
 // for keeping track of time for voltage to go up at 1 sec
 unsigned long timeVolt = 0;
@@ -34,7 +36,7 @@ unsigned long elapsedTime = 0;
 float error = 1;
 float cumError = 0;
 
-float setPoint = 2*PI;
+float setPoint = 1;
 
 // encoder declarations
 int aPin = 2;   //aPin will use interrupts, but bPin will not. 
@@ -66,6 +68,18 @@ void loop() {
     currentTime = millis();
     timeVolt = currentTime;
     time_now = currentTime;
+
+    // wait 5 ms
+    while(millis() < time_now + period){ 
+      //wait approx. [period] ms
+    }
+    //print current time
+    Serial.print(currentTime); 
+    Serial.print("\t");
+  
+    //print current position
+    Serial.print(currPos); 
+    Serial.print("\n");
   }
 
   // start step response at 1 second
@@ -76,7 +90,12 @@ void loop() {
     elapsedTime = currentTime - previousTime;
 
     // check encoder position
+    if (!reset) {
     currPos = myEnc.read() * ((2*PI) / 3200);
+    }
+    else {
+      currPos = 0;
+    }
       
     // calculate error from current position to desired position
     error = setPoint - currPos;
@@ -100,6 +119,9 @@ void loop() {
       // set motor to negative direction
       digitalWrite(motSign1, LOW);
     }
+
+    // need abs to avoid negative voltage commands for pwm
+    command = abs(command);
     
     // write voltage to the motor
     analogWrite(motorV1, command); 
@@ -113,43 +135,16 @@ void loop() {
     previousTime = currentTime;  
     
     //print current time
-    Serial.print(error); 
+    Serial.print(currentTime); 
     Serial.print("\t");
   
     //print current position
-    Serial.print(currPos); 
-    Serial.print("\n");
+    Serial.println(currPos); 
     }
-    
-  //command = 0;
-  //analogWrite(motorV1, command); 
-
-  // wait 5 ms
-  while(millis() < time_now + period){ 
-    //wait approx. [period] ms
-  }
-  /*
-  //print current time
-  Serial.print(currentTime); 
-  Serial.print("\t");
-
-  //print current position
-  Serial.print(currPos); 
-  Serial.print("\n");
-  */
 }
 // function to reset postion
 void keyPressed() {
   char inchar = (char)Serial.read();
   if (inchar == 'r')  reset = 1;
 }
-
-
-
-// for PID
-  //rateError = (error - lastError)/elapsedTime;
-  //output = Kp * error + Ki * cumError + Kd * rateError;
-  // lastError = error;
-
-
   
